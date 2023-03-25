@@ -1,0 +1,200 @@
+// MongoDB Playground
+// Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+
+const database = 'amazon_book_store';
+const book_collection = 'books';
+const user_collection = 'users';
+const order_collection = 'orders';
+const author_collection = 'authors';
+const category_collection = 'categories';
+
+
+
+// Deleteing and creating a new database.
+use(database);
+db.dropDatabase(database);
+// Create a new collection for books.
+db.createCollection(book_collection, {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["title", "author", "category", "available_quantity", "price", "isbn", "publication_date"],
+            properties: {
+                title: {
+                    bsonType: "string"
+                },
+                author: {
+                    bsonType: "array",
+                    minItems: 1,
+                    items: {
+                        bsonType: "object",
+                        required: ["name"],
+                        properties: {
+                            name: {
+                                bsonType: "string"
+                            },
+                            description: {
+                                bsonType: "string"
+                            }
+                        }
+                    }
+                },
+                category: {
+                    bsonType: "array",
+                    minItems: 1,
+                    description: "Category object for the book",
+                    items: {
+                        bsonType: "object",
+                        required: ["name"],
+                        properties: {
+                            name: {
+                                bsonType: "string"
+                            }
+                        }
+                    }
+
+                },
+                sub_category: {
+                    bsonType: "array",
+                    minItems: 1,
+                    items: {
+                        bsonType: "string"
+                    }
+                },
+                genres: {
+                    bsonType: "array",
+                    items: {
+                        bsonType: "string"
+                    }
+                },
+                available_quantity: {
+                    bsonType: "int"
+                },
+                price: {
+                    bsonType: "number"
+                },
+                isbn: {
+                    bsonType: "string"
+                },
+                page_count: {
+                    bsonType: "int"
+                },
+                publication_date: {
+                    bsonType: "string",
+                    description: "format: yyyy-MM-dd"
+                }
+            }
+        }
+    }
+});
+
+db.createCollection(user_collection, {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["username", "email", "password"],
+            properties: {
+                username: {
+                    bsonType: "string"
+                },
+                address: {
+                    bsonType: "object",
+                    properties: {
+                        street: {
+                            bsonType: "string",
+                        },
+                        zip: {
+                            bsonType: "string",
+                        },
+                        town: {
+                            bsonType: "string",
+                        }
+                    }
+                },
+                email: {
+                    bsonType: "string"
+                },
+                password: {
+                    bsonType: "string"
+                }
+            }
+        }
+    }
+});
+
+db.createCollection(author_collection, {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["name"],
+            properties: {
+                name: {
+                    bsonType: "string"
+                },
+                books: {
+                    bsonType: "array",
+                },
+                description: {
+                    bsonType: "string"
+                },
+            }
+        }
+    }
+});
+
+
+db.createCollection(category_collection, {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name", "subcategories"],
+      properties: {
+        name: {
+          bsonType: "string",
+        },
+        subcategories: {
+          bsonType: "array",
+          items: {
+            bsonType: "string",
+          },
+        }
+      }
+    }
+  }
+});
+db.createCollection(order_collection, {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            properties: {
+                ordered_items: {
+                    bsonType: "array",
+                    items: {
+                        bsonType: "object",
+                        properties: {
+                            quantity: {
+                                bsonType: "int"
+                            },
+                            book_id: {
+                                bsonType: "string"
+                            },
+                            price: {
+                                bsonType: "int"
+                            }
+                        }
+                    }
+                },
+                date: {
+                    bsonType: "string",
+                    description: "format: yyyy-MM-dd"
+                },
+                status: {
+                    enum: ["Completed", "Cancelled", "Pending"]
+                },
+                user_id: {
+                    bsonType: "string"
+                }
+            }
+        }
+    }
+});
